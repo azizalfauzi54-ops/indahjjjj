@@ -27,21 +27,37 @@ body {
   font-family: 'Cormorant Garamond', serif;
   overflow-x: hidden;
 }
-.bg-layer {
-  position:fixed; inset:0; z-index:0;
-  background:
-    radial-gradient(ellipse 70% 50% at 10% 5%, rgba(248,182,200,0.45) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 70% at 90% 95%, rgba(245,160,185,0.35) 0%, transparent 55%),
-    var(--rose-bg);
+
+/* ── THREE.JS CANVAS ── */
+#three-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
-.deco-circles { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+/* ── MOUSE TRAIL CANVAS ── */
+#trail-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.bg-layer {
+  position:fixed; inset:0; z-index:1;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 5%, rgba(248,182,200,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 70% at 90% 95%, rgba(245,160,185,0.22) 0%, transparent 55%);
+}
+.deco-circles { position:fixed; inset:0; z-index:1; pointer-events:none; }
 .deco-circle {
   position:absolute; border-radius:50%;
   border: 1px solid rgba(224,92,122,0.1);
   animation: rotateSlow var(--rd,30s) linear infinite;
 }
 @keyframes rotateSlow { to { transform:rotate(360deg); } }
-.petals { position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+.petals { position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
 .petal {
   position:absolute; border-radius:50% 0 50% 0; opacity:0;
   animation: fall var(--fd,9s) var(--fdelay,0s) infinite linear;
@@ -77,7 +93,7 @@ body {
   box-shadow: 0 4px 20px rgba(224,92,122,0.15);
 }
 .music-btn:hover { border-color:var(--rose); transform:scale(1.08); }
-.wrapper { position:relative; z-index:2; }
+.wrapper { position:relative; z-index:3; }
 section { padding:100px 8%; }
 .hero {
   min-height:100vh; display:flex; align-items:center; justify-content:center;
@@ -255,6 +271,12 @@ section { padding:100px 8%; }
 </head>
 <body>
 
+<!-- THREE.JS CANVAS — z-index:0, behind everything -->
+<canvas id="three-canvas"></canvas>
+
+<!-- MOUSE TRAIL CANVAS — z-index:10, above bg but below content -->
+<canvas id="trail-canvas"></canvas>
+
 <div class="loader" id="loader">
   <div class="loader-icon">🌸</div>
   <div class="loader-bar"><div class="loader-bar-fill"></div></div>
@@ -287,7 +309,7 @@ section { padding:100px 8%; }
       <span class="line3">Indah Jelita</span>
     </h1>
     <p class="hero-desc">
-      semoga hari ini jadi salah satu hari yang paling kamu inget 
+     selamat ulang tahun yaa sayangkuuu, aku harap hari ini jadi awal dari tahun yang penuh kebahagiaan, dan semua hal indah yang kamu impikan.
       
     </p>
     <div class="hero-date">✦ <span>14 September</span>  your special day ✦</div>
@@ -341,7 +363,7 @@ section { padding:100px 8%; }
     </div>
     <div class="masonry-item">
       <img src="kecill.jpeg" alt="">
-      <div class="item-label"><h4>baikkk</h4><p></p></div>
+      <div class="item-label"><h4>mantep nih</h4><p></p></div>
     </div>
     <div class="masonry-item">
       <img src="indah6.jpeg" alt="">
@@ -349,7 +371,7 @@ section { padding:100px 8%; }
     </div>
     <div class="masonry-item">
       <img src="image15.jpeg" alt="">
-      <div class="item-label"><h4>cakepppp &amp; Lagi</h4><p>gacorrr</p></div>
+      <div class="item-label"><h4>cakepppp amat &amp; </h4><p></p></div>
     </div>
     <div class="masonry-item">
       <img src="indah3.jpeg" alt="">
@@ -357,15 +379,15 @@ section { padding:100px 8%; }
     </div>
     <div class="masonry-item">
       <img src="indah1 (2).jpeg" alt="">
-      <div class="item-label"><h4>Our</h4><p>story still being written </p></div>
+      <div class="item-label"><h4>gacorr</h4><p> </p></div>
     </div>
     <div class="masonry-item">
       <img src="indahcantik.jpeg" alt="">
-      <div class="item-label"><h4>Our</h4><p>story still being written </p></div>
+      <div class="item-label"><h4>aduhhhh</h4><p> </p></div>
     </div>
     <div class="masonry-item">
       <img src="injell.jpeg" alt="">
-      <div class="item-label"><h4>Our</h4><p>story still being written </p></div>
+      <div class="item-label"><h4>cantikk banget</h4><p> </p></div>
     </div>
   </div>
 </section>
@@ -380,7 +402,7 @@ section { padding:100px 8%; }
       <em>yang terbaik buat kamu</em>"
     </blockquote>
     <p>
-      maaf kalo kesanya alay babe, tapi ini serius
+      maaf kalo kesanya alay babe, tapi ini serius dan aku bersyukur banget bisa kenal sama kamu
     </p>
   </div>
 </section>
@@ -448,7 +470,7 @@ section { padding:100px 8%; }
   <div class="closing-ring" style="width:660px;height:660px;top:50%;left:50%;animation-delay:-1s;"></div>
   <div class="closing-content reveal">
     <h2>HBD <em>Indah Jelitaaa</em></h2>
-    <p>panjang umur, sehat selalu, semoga semua yang kamu mau tercapai. im here for you.</p>
+    <p>panjang umur, sehat selalu, semoga semua yang kamu impikan semuanya tercapai, kejar S2 unpad ituuu, im here for you.</p>
     <div class="closing-sig">aziz with love ♡</div>
     <div class="closing-badge">14 September · your special day</div>
   </div>
@@ -456,10 +478,445 @@ section { padding:100px 8%; }
 
 </div>
 
+<!-- THREE.JS via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
+/* ═══════════════════════════════════════════════
+   THREE.JS 3D BACKGROUND
+   - Floating heart / torus shapes in rose palette
+   - Gentle particle field
+   - Mouse parallax
+   ═══════════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('three-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 18);
+
+  /* ── LIGHTS ── */
+  const ambientLight = new THREE.AmbientLight(0xfde8ef, 0.8);
+  scene.add(ambientLight);
+  const dirLight = new THREE.DirectionalLight(0xe05c7a, 1.2);
+  dirLight.position.set(5, 8, 10);
+  scene.add(dirLight);
+  const pointLight = new THREE.PointLight(0xf5b8c8, 1.5, 60);
+  pointLight.position.set(-8, 4, 6);
+  scene.add(pointLight);
+
+  /* ── PALETTE ── */
+  const rosePalette = [
+    0xe05c7a, 0xe8849a, 0xf5b8c8,
+    0xfde8ef, 0xb8895a, 0xf2a0bc,
+    0xf9d0de, 0xd4537e
+  ];
+
+  /* ── FLOATING TORUS KNOTS (dreamy shapes) ── */
+  const torusKnots = [];
+  const tkGeo = new THREE.TorusKnotGeometry(0.55, 0.18, 80, 16, 2, 3);
+  for (let i = 0; i < 8; i++) {
+    const mat = new THREE.MeshPhongMaterial({
+      color: rosePalette[i % rosePalette.length],
+      transparent: true,
+      opacity: 0.13 + Math.random() * 0.10,
+      shininess: 60,
+      wireframe: false
+    });
+    const mesh = new THREE.Mesh(tkGeo, mat);
+    mesh.position.set(
+      (Math.random() - 0.5) * 34,
+      (Math.random() - 0.5) * 28,
+      (Math.random() - 0.5) * 14 - 4
+    );
+    const s = 0.6 + Math.random() * 1.2;
+    mesh.scale.setScalar(s);
+    mesh.userData = {
+      speedX: (Math.random() - 0.5) * 0.003,
+      speedY: (Math.random() - 0.5) * 0.003,
+      speedZ: (Math.random() - 0.5) * 0.002,
+      floatAmp: 0.3 + Math.random() * 0.5,
+      floatFreq: 0.4 + Math.random() * 0.6,
+      floatOffset: Math.random() * Math.PI * 2
+    };
+    scene.add(mesh);
+    torusKnots.push(mesh);
+  }
+
+  /* ── FLOATING TORUS (rings) ── */
+  const rings = [];
+  const ringGeo = new THREE.TorusGeometry(1, 0.06, 16, 80);
+  for (let i = 0; i < 10; i++) {
+    const mat = new THREE.MeshPhongMaterial({
+      color: rosePalette[i % rosePalette.length],
+      transparent: true,
+      opacity: 0.08 + Math.random() * 0.12,
+      shininess: 80
+    });
+    const mesh = new THREE.Mesh(ringGeo, mat);
+    mesh.position.set(
+      (Math.random() - 0.5) * 40,
+      (Math.random() - 0.5) * 32,
+      (Math.random() - 0.5) * 12 - 6
+    );
+    const s = 1.0 + Math.random() * 2.5;
+    mesh.scale.setScalar(s);
+    mesh.rotation.x = Math.random() * Math.PI;
+    mesh.rotation.y = Math.random() * Math.PI;
+    mesh.userData = {
+      rotX: (Math.random() - 0.5) * 0.004,
+      rotY: (Math.random() - 0.5) * 0.004,
+      floatAmp: 0.2 + Math.random() * 0.4,
+      floatFreq: 0.3 + Math.random() * 0.5,
+      floatOffset: Math.random() * Math.PI * 2
+    };
+    scene.add(mesh);
+    rings.push(mesh);
+  }
+
+  /* ── ICOSAHEDRON GEMS ── */
+  const gems = [];
+  const gemGeo = new THREE.IcosahedronGeometry(0.4, 0);
+  for (let i = 0; i < 14; i++) {
+    const mat = new THREE.MeshPhongMaterial({
+      color: rosePalette[i % rosePalette.length],
+      transparent: true,
+      opacity: 0.10 + Math.random() * 0.14,
+      shininess: 120,
+      flatShading: true
+    });
+    const mesh = new THREE.Mesh(gemGeo, mat);
+    mesh.position.set(
+      (Math.random() - 0.5) * 44,
+      (Math.random() - 0.5) * 36,
+      (Math.random() - 0.5) * 10 - 5
+    );
+    const s = 0.5 + Math.random() * 1.8;
+    mesh.scale.setScalar(s);
+    mesh.userData = {
+      rotX: (Math.random() - 0.5) * 0.006,
+      rotY: (Math.random() - 0.5) * 0.006,
+      floatAmp: 0.15 + Math.random() * 0.35,
+      floatFreq: 0.5 + Math.random() * 0.8,
+      floatOffset: Math.random() * Math.PI * 2
+    };
+    scene.add(mesh);
+    gems.push(mesh);
+  }
+
+  /* ── STAR / PARTICLE FIELD ── */
+  const particleCount = 320;
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 60;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
+  }
+  const particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particleMat = new THREE.PointsMaterial({
+    color: 0xf5b8c8,
+    size: 0.08,
+    transparent: true,
+    opacity: 0.55,
+    sizeAttenuation: true
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
+  /* ── MOUSE PARALLAX ── */
+  let mouseX = 0, mouseY = 0;
+  let targetX = 0, targetY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  /* ── SCROLL-BASED DEPTH ── */
+  let scrollY = 0;
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+  /* ── RESIZE ── */
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
+  /* ── ANIMATION LOOP ── */
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const elapsed = clock.getElapsedTime();
+
+    /* smooth mouse */
+    targetX += (mouseX - targetX) * 0.03;
+    targetY += (mouseY - targetY) * 0.03;
+
+    /* camera gentle sway */
+    camera.position.x = targetX * 2.0;
+    camera.position.y = -targetY * 1.5 - scrollY * 0.003;
+    camera.lookAt(0, -scrollY * 0.002, 0);
+
+    /* torus knots */
+    torusKnots.forEach(m => {
+      m.rotation.x += m.userData.speedX;
+      m.rotation.y += m.userData.speedY;
+      m.rotation.z += m.userData.speedZ;
+      m.position.y += Math.sin(elapsed * m.userData.floatFreq + m.userData.floatOffset) * m.userData.floatAmp * 0.008;
+    });
+
+    /* rings */
+    rings.forEach(m => {
+      m.rotation.x += m.userData.rotX;
+      m.rotation.y += m.userData.rotY;
+      m.position.y += Math.sin(elapsed * m.userData.floatFreq + m.userData.floatOffset) * m.userData.floatAmp * 0.007;
+    });
+
+    /* gems */
+    gems.forEach(m => {
+      m.rotation.x += m.userData.rotX;
+      m.rotation.y += m.userData.rotY;
+      m.position.y += Math.sin(elapsed * m.userData.floatFreq + m.userData.floatOffset) * m.userData.floatAmp * 0.007;
+    });
+
+    /* particles slow drift */
+    particles.rotation.y = elapsed * 0.012;
+    particles.rotation.x = elapsed * 0.006;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+})();
+
+/* ═══════════════════════════════════════════════
+   MOUSE TRAIL EFFECT
+   - Sparkle particles on mouse move
+   - Heart burst on click
+   - Canvas overlay, no DOM spam
+   ═══════════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('trail-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* palette */
+  const colors = [
+    'rgba(224,92,122,',   /* rose */
+    'rgba(232,132,154,',  /* rose-mid */
+    'rgba(245,184,200,',  /* rose-light */
+    'rgba(184,137,90,',   /* gold */
+    'rgba(242,160,188,',  /* pink */
+    'rgba(255,200,220,'   /* pale */
+  ];
+
+  /* ── PARTICLE POOL ── */
+  const particles = [];
+
+  class Particle {
+    constructor(x, y, type) {
+      this.x = x;
+      this.y = y;
+      this.type = type; /* 'spark' | 'heart' | 'star' */
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+
+      if (type === 'heart') {
+        this.size  = 8 + Math.random() * 14;
+        this.vx    = (Math.random() - 0.5) * 4.5;
+        this.vy    = -2.5 - Math.random() * 3.5;
+        this.alpha = 0.9;
+        this.decay = 0.018 + Math.random() * 0.012;
+        this.gravity = 0.08;
+        this.rotation = (Math.random() - 0.5) * 0.3;
+      } else if (type === 'star') {
+        this.size  = 3 + Math.random() * 5;
+        this.vx    = (Math.random() - 0.5) * 3;
+        this.vy    = (Math.random() - 0.5) * 3;
+        this.alpha = 0.85;
+        this.decay = 0.025 + Math.random() * 0.02;
+        this.gravity = 0.04;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.15;
+        this.points = Math.random() < 0.5 ? 4 : 6;
+      } else { /* spark */
+        this.size  = 2 + Math.random() * 4;
+        this.vx    = (Math.random() - 0.5) * 2.5;
+        this.vy    = -0.5 - Math.random() * 2;
+        this.alpha = 0.75;
+        this.decay = 0.030 + Math.random() * 0.025;
+        this.gravity = 0.05;
+      }
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += this.gravity;
+      this.vx *= 0.97;
+      this.alpha -= this.decay;
+      if (this.rotation !== undefined) this.rotation += (this.rotSpeed || 0);
+    }
+
+    draw(ctx) {
+      if (this.alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, this.alpha);
+
+      if (this.type === 'heart') {
+        ctx.translate(this.x, this.y);
+        ctx.scale(this.size / 10, this.size / 10);
+        ctx.fillStyle = this.color + this.alpha.toFixed(2) + ')';
+        ctx.beginPath();
+        ctx.moveTo(0, -3);
+        ctx.bezierCurveTo( 5, -8,  10,  0,  0,  8);
+        ctx.bezierCurveTo(-10,  0, -5, -8,  0, -3);
+        ctx.fill();
+
+      } else if (this.type === 'star') {
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.fillStyle = this.color + this.alpha.toFixed(2) + ')';
+        ctx.beginPath();
+        const n = this.points;
+        const outerR = this.size;
+        const innerR = this.size * 0.42;
+        for (let i = 0; i < n * 2; i++) {
+          const r = i % 2 === 0 ? outerR : innerR;
+          const angle = (i * Math.PI) / n - Math.PI / 2;
+          if (i === 0) ctx.moveTo(Math.cos(angle) * r, Math.sin(angle) * r);
+          else ctx.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+      } else { /* spark — glowing circle */
+        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+        grad.addColorStop(0,   this.color + Math.min(1, this.alpha * 1.4).toFixed(2) + ')');
+        grad.addColorStop(0.5, this.color + this.alpha.toFixed(2) + ')');
+        grad.addColorStop(1,   this.color + '0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    isDead() { return this.alpha <= 0; }
+  }
+
+  /* ── TRAIL HISTORY for smooth glow line ── */
+  const trail = [];
+  const TRAIL_MAX = 28;
+
+  /* ── MOUSE MOVE → spawn particles ── */
+  let frameCount = 0;
+  let lastMX = -999, lastMY = -999;
+
+  document.addEventListener('mousemove', e => {
+    const mx = e.clientX, my = e.clientY;
+    trail.push({ x: mx, y: my, alpha: 0.55 });
+    if (trail.length > TRAIL_MAX) trail.shift();
+
+    frameCount++;
+    /* spawn a mix: mostly sparks, occasional star */
+    if (frameCount % 2 === 0) {
+      particles.push(new Particle(mx, my, 'spark'));
+    }
+    if (frameCount % 5 === 0) {
+      particles.push(new Particle(mx, my, 'star'));
+    }
+    /* small heart every 10 frames while moving */
+    const dx = mx - lastMX, dy = my - lastMY;
+    if (Math.sqrt(dx*dx + dy*dy) > 12 && frameCount % 10 === 0) {
+      particles.push(new Particle(mx, my, 'heart'));
+    }
+    lastMX = mx; lastMY = my;
+  });
+
+  /* ── CLICK → heart burst ── */
+  document.addEventListener('click', e => {
+    const cx = e.clientX, cy = e.clientY;
+    for (let i = 0; i < 14; i++) {
+      particles.push(new Particle(cx, cy, 'heart'));
+    }
+    for (let i = 0; i < 10; i++) {
+      particles.push(new Particle(cx, cy, 'star'));
+    }
+    for (let i = 0; i < 8; i++) {
+      particles.push(new Particle(cx, cy, 'spark'));
+    }
+  });
+
+  /* ── RENDER LOOP ── */
+  function loop() {
+    requestAnimationFrame(loop);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    /* draw smooth glow trail */
+    if (trail.length > 2) {
+      for (let i = 1; i < trail.length; i++) {
+        const t = trail[i];
+        const prog = i / trail.length; /* 0→1 newest */
+        const lineAlpha = prog * 0.35;
+        const lineWidth = prog * 5;
+        ctx.beginPath();
+        ctx.moveTo(trail[i-1].x, trail[i-1].y);
+        ctx.lineTo(t.x, t.y);
+        ctx.strokeStyle = `rgba(224,92,122,${lineAlpha.toFixed(3)})`;
+        ctx.lineWidth   = lineWidth;
+        ctx.lineCap     = 'round';
+        ctx.stroke();
+      }
+      /* glow dot at cursor tip */
+      const tip = trail[trail.length - 1];
+      const g = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 14);
+      g.addColorStop(0,   'rgba(224,92,122,0.55)');
+      g.addColorStop(0.4, 'rgba(245,184,200,0.30)');
+      g.addColorStop(1,   'rgba(245,184,200,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, 14, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* update & draw particles */
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      if (particles[i].isDead()) particles.splice(i, 1);
+    }
+
+    /* fade trail points */
+    for (let i = 0; i < trail.length; i++) {
+      trail[i].alpha -= 0.04;
+    }
+    while (trail.length && trail[0].alpha <= 0) trail.shift();
+  }
+
+  loop();
+})();
+
+/* ═══════════════════════════════════════════════
+   ORIGINAL SCRIPTS (unchanged)
+   ═══════════════════════════════════════════════ */
 window.addEventListener('load', () => {
   setTimeout(() => document.getElementById('loader').classList.add('hide'), 1900);
 });
+
 const petalsEl = document.getElementById('petals');
 const pc = ['#f5b8c8','#f2a0bc','#e8849a','#fde8ef','#f9d0de'];
 for (let i = 0; i < 22; i++) {
@@ -469,6 +926,7 @@ for (let i = 0; i < 22; i++) {
   p.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${pc[Math.floor(Math.random()*pc.length)]};--fd:${(7+Math.random()*9).toFixed(1)}s;--fdelay:${(Math.random()*14).toFixed(1)}s;`;
   petalsEl.appendChild(p);
 }
+
 const music = document.getElementById('music');
 const btn = document.getElementById('musicBtn');
 let playing = false;
@@ -476,6 +934,7 @@ btn.onclick = () => {
   if (!playing) { music.play().catch(()=>{}); btn.textContent='❙❙'; playing=true; }
   else { music.pause(); btn.textContent='♫'; playing=false; }
 };
+
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} });
 }, {threshold:0.1});
