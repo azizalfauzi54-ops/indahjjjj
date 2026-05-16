@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For Indah 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose:       #e05c7a;
+  --rose-mid:   #e8849a;
+  --rose-light: #f5b8c8;
+  --rose-pale:  #fde8ef;
+  --rose-bg:    #fff5f8;
+  --gold:       #b8895a;
+  --ink:        #3a1a24;
+  --ink-mid:    #6b3a4a;
+  --muted:      rgba(58,26,36,0.5);
+  --border:     rgba(224,92,122,0.15);
+  --white:      #ffffff;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--rose-bg);
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+}
+
+/* ── THREE.JS CANVAS ── */
+#three-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── MOUSE TRAIL CANVAS ── */
+#trail-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.bg-layer {
+  position:fixed; inset:0; z-index:1;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 5%, rgba(248,182,200,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 70% at 90% 95%, rgba(245,160,185,0.22) 0%, transparent 55%);
+}
+.deco-circles { position:fixed; inset:0; z-index:1; pointer-events:none; }
+.deco-circle {
+  position:absolute; border-radius:50%;
+  border: 1px solid rgba(224,92,122,0.1);
+  animation: rotateSlow var(--rd,30s) linear infinite;
+}
+@keyframes rotateSlow { to { transform:rotate(360deg); } }
+.petals { position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
+.petal {
+  position:absolute; border-radius:50% 0 50% 0; opacity:0;
+  animation: fall var(--fd,9s) var(--fdelay,0s) infinite linear;
+}
+@keyframes fall {
+  0%   { transform:translateY(-20px) rotate(0deg); opacity:0; }
+  10%  { opacity:0.65; }
+  90%  { opacity:0.25; }
+  100% { transform:translateY(110vh) rotate(400deg); opacity:0; }
+}
+.loader {
+  position:fixed; inset:0; z-index:99999;
+  background:var(--white);
+  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px;
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+.loader.hide { opacity:0; visibility:hidden; pointer-events:none; }
+.loader-icon { font-size:50px; animation:pulse 1.4s infinite ease-in-out; }
+@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+.loader-bar { width:100px; height:2px; border-radius:2px; background:rgba(224,92,122,0.15); overflow:hidden; }
+.loader-bar-fill { height:100%; width:0; border-radius:2px; background:var(--rose); animation:barFill 1.6s ease-in-out forwards; }
+@keyframes barFill { to { width:100%; } }
+.loader-text { font-family:'Inter'; letter-spacing:5px; font-size:10px; color:var(--rose-mid); text-transform:uppercase; }
+.music { position:fixed; right:28px; bottom:28px; z-index:9999; }
+.music-btn {
+  width:50px; height:50px; border-radius:50%;
+  border:1.5px solid rgba(224,92,122,0.3);
+  background:rgba(255, 255, 255, 0.337);
+  backdrop-filter:blur(12px);
+  color:var(--rose); font-size:17px; cursor:pointer;
+  transition:all 0.3s ease;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 20px rgba(224,92,122,0.15);
+}
+.music-btn:hover { border-color:var(--rose); transform:scale(1.08); }
+.wrapper { position:relative; z-index:3; }
+section { padding:100px 8%; }
+.hero {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  text-align:center; position:relative; padding:0 8%;
+}
+.hero-glow {
+  position:absolute; width:560px; height:560px; border-radius:50%;
+  background:radial-gradient(circle, rgba(240,140,165,0.22), transparent 65%);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  filter:blur(50px); animation:breathe 5s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,100%{transform:translate(-50%,-50%) scale(1);}
+  50%{transform:translate(-50%,-50%) scale(1.12);}
+}
+.hero-content { position:relative; z-index:2; }
+.hero-eyebrow {
+  font-family:'Inter'; letter-spacing:6px; font-size:10px;
+  color:var(--rose); text-transform:uppercase; margin-bottom:22px;
+  display:flex; align-items:center; justify-content:center; gap:14px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after { content:''; width:36px; height:1px; background:var(--rose-light); }
+.hero h1 { font-size:clamp(50px,11vw,118px); font-weight:300; line-height:0.92; }
+.hero h1 .line1 { display:block; color:var(--ink); }
+.hero h1 .line2 { display:block; font-style:italic; color:var(--rose); }
+.hero h1 .line3 { display:block; font-size:clamp(17px,3vw,26px); font-weight:400; color:var(--gold); margin-top:18px; letter-spacing:3px; }
+.hero-desc {
+  margin-top:36px; max-width:500px; margin-left:auto; margin-right:auto;
+  color:var(--ink-mid); font-size:clamp(16px,1.8vw,19px); line-height:2; font-weight:300;
+}
+.hero-date {
+  margin-top:34px; display:inline-flex; align-items:center; gap:10px;
+  font-family:'Inter'; font-size:10px; letter-spacing:4px;
+  color:rgba(0, 0, 0, 0.7); text-transform:uppercase;
+}
+.hero-date span { color:var(--gold); font-weight:500; }
+.scroll-hint {
+  position:absolute; bottom:38px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  font-family:'Inter'; font-size:10px; letter-spacing:3px; color:var(--rose-light);
+  animation:floatDown 2.5s ease-in-out infinite;
+}
+.scroll-hint::after { content:''; width:1px; height:36px; background:linear-gradient(to bottom, var(--rose-light), transparent); }
+@keyframes floatDown {
+  0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(8px);}
+}
+.sec-label {
+  font-family:'Inter'; letter-spacing:5px; font-size:10px;
+  color:var(--rose); text-transform:uppercase;
+  display:flex; align-items:center; gap:14px; justify-content:center; margin-bottom:14px;
+}
+.sec-label::before { content:''; flex:1; max-width:70px; height:1px; background:linear-gradient(90deg, transparent, var(--rose-light)); }
+.sec-label::after  { content:''; flex:1; max-width:70px; height:1px; background:linear-gradient(90deg, var(--rose-light), transparent); }
+.sec-title { text-align:center; margin-bottom:60px; }
+.sec-title h2 { font-size:clamp(38px,7vw,72px); font-weight:300; line-height:1; color:var(--ink); }
+.sec-title h2 em { font-style:italic; color:var(--rose); }
+.sec-title p { margin-top:14px; color:var(--muted); font-size:16px; line-height:1.8; }
+.slider-wrap { position:relative; overflow:hidden; border-radius:24px; box-shadow:0 20px 60px rgba(224,92,122,0.13); }
+.slider-inner { display:flex; animation:slide 15s infinite; }
+.slider-inner img { width:100%; flex:1 0 40%; height:min(68vh,660px); object-fit:cover; filter:brightness(0.8) saturate(0.9); }
+.slider-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(253, 232, 239, 0.08) 0%, transparent 70%); }
+@keyframes slide {
+  0%,18%{transform:translateX(0);}
+  20%,38%{transform:translateX(-100%);}
+  40%,58%{transform:translateX(-200%);}
+  60%,78%{transform:translateX(-300%);}
+  80%,98%{transform:translateX(-400%);}
+  100%{transform:translateX(0);}
+}
+.masonry { columns:3; gap:14px; column-fill:balance; }
+@media(max-width:900px){ .masonry{ columns:2; } }
+@media(max-width:540px){ .masonry{ columns:1; } }
+.masonry-item {
+  break-inside:avoid; margin-bottom:14px;
+  position:relative; border-radius:18px; overflow:hidden;
+  box-shadow:0 6px 24px rgba(224,92,122,0.1);
+}
+.masonry-item img { width:100%; display:block; filter:brightness(0.82) saturate(0.9); transition:transform 0.6s ease; }
+.masonry-item:hover img { transform:scale(1.04); }
+.item-label {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:44px 16px 15px;
+  background:linear-gradient(to top, rgba(253, 232, 239, 0.136) 0%, transparent 100%);
+}
+.item-label h4 { font-size:17px; font-weight:500; color:var(--ink); }
+.item-label p { font-size:12px; color:var(--ink-mid); margin-top:3px; font-family:'Inter'; font-weight:300; line-height:1.5; }
+.quote-wrap {
+  max-width:800px; margin:auto; padding:60px 52px;
+  border:1px solid var(--border); border-radius:28px;
+  background:var(--white); box-shadow:0 12px 50px rgba(224,92,122,0.1);
+  text-align:center; position:relative; overflow:hidden;
+}
+.quote-wrap::before {
+  content:'\201C'; position:absolute; top:-30px; left:30px;
+  font-size:200px; font-family:'Cormorant Garamond';
+  color:var(--rose-light); opacity:0.3; line-height:1; pointer-events:none;
+}
+.quote-wrap blockquote { font-size:clamp(23px,3.8vw,38px); font-weight:300; line-height:1.5; color:var(--ink); }
+.quote-wrap blockquote em { font-style:italic; color:var(--rose); }
+.quote-wrap p { margin-top:22px; font-size:16px; color:var(--muted); line-height:1.9; }
+.moments-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+@media(max-width:768px){ .moments-strip{ grid-template-columns:1fr; } }
+.moment-card {
+  border:1px solid var(--border); border-radius:22px; overflow:hidden;
+  background:var(--white); box-shadow:0 6px 30px rgba(224,92,122,0.08);
+  transition:transform 0.4s ease, box-shadow 0.4s;
+}
+.moment-card:hover { transform:translateY(-6px); box-shadow:0 14px 40px rgba(224,92,122,0.16); }
+.moment-card img { width:100%; height:210px; object-fit:cover; filter:brightness(0.82) saturate(0.88); }
+.moment-card-body { padding:10px 14px; }
+.moment-num {
+  font-family:'Cormorant Garamond'; font-size:46px; font-weight:300;
+  font-style:italic; color:rgba(224,92,122,0.15); line-height:1; display:block; margin-bottom:5px;
+}
+.moment-card-body h4 { font-size:21px; font-weight:400; color:var(--ink); }
+.moment-card-body p { margin-top:8px; font-size:13px; color:var(--muted); line-height:1.75; font-family:'Inter'; font-weight:300; }
+.letter-outer { max-width:700px; margin:auto; }
+.letter-wrap {
+  padding:52px; border:1px solid var(--border); border-radius:28px;
+  background:var(--white); box-shadow:0 12px 48px rgba(224,92,122,0.1);
+  position:relative; overflow:hidden;
+}
+.letter-wrap::after {
+  content:''; position:absolute; bottom:0; right:0; width:180px; height:180px; border-radius:50%;
+  background:radial-gradient(circle, rgba(245,184,200,0.2), transparent 70%); pointer-events:none;
+}
+.letter-greeting { font-size:26px; color:var(--rose); font-style:italic; margin-bottom:20px; }
+.letter-wrap p { font-size:17px; color:var(--ink-mid); line-height:2; margin-bottom:12px; }
+.letter-wrap p em { color:var(--ink); font-style:italic; }
+.letter-sig { margin-top:30px; text-align:right; }
+.letter-sig span { font-size:27px; color:var(--gold); font-style:italic; display:block; }
+.letter-sig small { font-family:'Inter'; font-size:10px; letter-spacing:3px; color:rgba(176,130,80,0.5); text-transform:uppercase; }
+.divider {
+  text-align:center; padding:0; margin:0;
+  position:relative; height:60px; display:flex; align-items:center; justify-content:center;
+}
+.divider::before {
+  content:''; position:absolute; left:8%; right:8%; top:50%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--rose-light), transparent);
+}
+.divider span { position:relative; background:var(--rose-bg); padding:0 20px; font-size:18px; color:var(--rose-light); }
+.closing {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  text-align:center; position:relative; overflow:hidden;
+}
+.closing-ring {
+  position:absolute; border-radius:50%;
+  border:1px solid rgba(224,92,122,0.12);
+  animation:ringPulse 5s ease-in-out infinite;
+}
+@keyframes ringPulse {
+  0%,100%{transform:translate(-50%,-50%) scale(1); opacity:0.7;}
+  50%{transform:translate(-50%,-50%) scale(1.06); opacity:0.25;}
+}
+.closing-content { position:relative; z-index:2; }
+.closing-content h2 { font-size:clamp(44px,9vw,94px); font-weight:300; line-height:1; color:var(--ink); }
+.closing-content h2 em { font-style:italic; color:var(--rose); display:block; }
+.closing-content p { max-width:580px; margin:26px auto 0; font-size:17px; color:var(--muted); line-height:2; }
+.closing-sig { margin-top:44px; font-size:30px; color:var(--gold); font-style:italic; }
+.closing-badge {
+  display:inline-block; margin-top:28px; padding:10px 28px; border-radius:100px;
+  border:1px solid var(--border); background:var(--white);
+  font-family:'Inter'; font-size:11px; letter-spacing:4px;
+  color:var(--rose); text-transform:uppercase; box-shadow:0 4px 20px rgba(224,92,122,0.1);
+}
+.reveal { opacity:0; transform:translateY(28px); transition:opacity 2s ease, transform 2s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ── TABLET ── */
+@media(max-width:768px){
+  section { padding:70px 5%; }
+
+  .hero { padding:0 5%; min-height:100svh; }
+  .hero h1 { font-size:clamp(46px,13vw,80px); }
+  .hero h1 .line3 { font-size:clamp(14px,4vw,20px); margin-top:12px; }
+  .hero-desc { font-size:16px; margin-top:24px; }
+  .hero-date { font-size:9px; letter-spacing:3px; margin-top:22px; }
+  .hero-glow { width:320px; height:320px; }
+
+  .sec-title { margin-bottom:36px; }
+  .sec-title h2 { font-size:clamp(30px,9vw,54px); }
+
+  .slider-inner img { height:min(50vh,380px); }
+
+  .quote-wrap { padding:30px 20px; border-radius:20px; }
+  .quote-wrap blockquote { font-size:clamp(20px,5.5vw,28px); }
+  .quote-wrap::before { font-size:130px; top:-18px; left:14px; }
+
+  .moments-strip { grid-template-columns:1fr; gap:14px; }
+  .moment-card img { height:180px; }
+  .moment-num { font-size:36px; }
+  .moment-card-body h4 { font-size:18px; }
+
+  .letter-outer { max-width:100%; }
+  .letter-wrap { padding:28px 20px; border-radius:20px; }
+  .letter-greeting { font-size:21px; margin-bottom:14px; }
+  .letter-wrap p { font-size:15px; line-height:1.85; }
+  .letter-sig span { font-size:22px; }
+
+  .closing-content h2 { font-size:clamp(36px,10vw,64px); }
+  .closing-content p { font-size:15px; margin-top:18px; }
+  .closing-sig { font-size:24px; margin-top:28px; }
+  .closing-badge { font-size:10px; padding:8px 20px; margin-top:20px; }
+
+  .music { right:16px; bottom:16px; }
+  .music-btn { width:44px; height:44px; font-size:15px; }
+}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  section { padding:56px 4%; }
+
+  .hero { padding:0 4%; }
+  .hero h1 { font-size:clamp(42px,14.5vw,68px); line-height:0.95; }
+  .hero h1 .line3 { font-size:clamp(13px,4.5vw,18px); letter-spacing:2px; margin-top:10px; }
+  .hero-eyebrow { font-size:9px; letter-spacing:4px; margin-bottom:16px; }
+  .hero-eyebrow::before, .hero-eyebrow::after { width:22px; }
+  .hero-desc { font-size:15px; line-height:1.8; margin-top:18px; max-width:100%; }
+  .hero-date { font-size:8px; letter-spacing:2px; margin-top:18px; flex-wrap:wrap; justify-content:center; gap:6px; }
+  .hero-glow { width:240px; height:240px; }
+  .scroll-hint { bottom:24px; }
+
+  .sec-label { font-size:9px; letter-spacing:4px; }
+  .sec-label::before, .sec-label::after { max-width:40px; }
+  .sec-title { margin-bottom:28px; }
+  .sec-title h2 { font-size:clamp(28px,10vw,44px); }
+  .sec-title p { font-size:14px; }
+
+  .slider-wrap { border-radius:16px; }
+  .slider-inner img { height:min(45vh,300px); }
+
+  .masonry { gap:10px; }
+  .masonry-item { margin-bottom:10px; border-radius:14px; }
+  .item-label h4 { font-size:15px; }
+  .item-label p { font-size:11px; }
+
+  .quote-wrap { padding:26px 16px; border-radius:18px; }
+  .quote-wrap blockquote { font-size:clamp(18px,5.8vw,24px); line-height:1.6; }
+  .quote-wrap p { font-size:14px; margin-top:16px; line-height:1.8; }
+  .quote-wrap::before { font-size:100px; top:-12px; left:10px; }
+
+  .moment-card { border-radius:18px; }
+  .moment-card img { height:160px; }
+  .moment-num { font-size:32px; }
+  .moment-card-body { padding:8px 12px 12px; }
+  .moment-card-body h4 { font-size:17px; }
+  .moment-card-body p { font-size:12px; }
+
+  .letter-wrap { padding:22px 16px; border-radius:18px; }
+  .letter-greeting { font-size:19px; }
+  .letter-wrap p { font-size:14px; line-height:1.8; margin-bottom:10px; }
+  .letter-sig { margin-top:22px; }
+  .letter-sig span { font-size:20px; }
+  .letter-sig small { font-size:9px; }
+
+  .divider { height:44px; }
+  .divider span { font-size:15px; padding:0 14px; }
+
+  .closing { padding:0 4%; }
+  .closing-content h2 { font-size:clamp(32px,11vw,52px); }
+  .closing-content p { font-size:14px; line-height:1.85; margin-top:14px; max-width:100%; }
+  .closing-sig { font-size:21px; margin-top:22px; }
+  .closing-badge { font-size:9px; letter-spacing:3px; padding:8px 18px; margin-top:16px; }
+  .closing-ring:nth-child(3) { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- THREE.JS CANVAS — z-index:0, behind everything -->
+<canvas id="three-canvas"></canvas>
+
+<!-- MOUSE TRAIL CANVAS — z-index:10, above bg but below content -->
+<canvas id="trail-canvas"></canvas>
+
+<div class="loader" id="loader">
+  <div class="loader-icon">🌸</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  <div class="loader-text">Bentar ya sayangkuu...</div>
+</div>
+
+<div class="bg-layer"></div>
+<div class="deco-circles">
+  <div class="deco-circle" style="width:600px;height:600px;top:-100px;left:-150px;--rd:35s;"></div>
+  <div class="deco-circle" style="width:400px;height:400px;bottom:-80px;right:-100px;--rd:28s;"></div>
+</div>
+<div class="petals" id="petals"></div>
+
+<div class="music">
+  <button class="music-btn" id="musicBtn">♫</button>
+</div>
+<audio id="music" loop>
+  <source src="lover.mp3" type="audio/mpeg">
+</audio>
+
+<div class="wrapper">
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">For you babeee</div>
+    <h1>
+      <span class="line1">Happy</span>
+      <span class="line2">Birthday</span>
+      <span class="line3">Indah Jelita</span>
+    </h1>
+    <p class="hero-desc">
+      semoga hari ini jadi awal dari tahun yang penuh kebahagiaan, dan semua hal indah yang kamu impikan.
+
+    </p>
+    <div class="hero-date">✦ <span>14 September</span>  your special day ✦</div>
+  </div>
+  <div class="scroll-hint">scroll</div>
+</section>
+
+<div class="divider"><span>✦</span></div>
+
+<section class="reveal">
+  <div class="sec-title">
+    <div class="sec-label">This</div>
+    <h2>Our <em>Moments</em></h2>
+    <p>.</p>
+  </div>
+  <div class="slider-wrap">
+    <div class="slider-inner">
+      <img src="image0.jpeg" alt="">
+      <img src="image8.jpeg" alt="">
+      <img src="image11.jpeg" alt="">
+      <img src="image2.jpeg" alt="">
+      <img src="image15.jpeg" alt="">
+      <img src="image3.jpeg" alt="">
+      <img src="image17.jpeg" alt="">
+      <img src="image18.jpeg" alt="">
+      <img src="image16.jpeg" alt="">
+      <img src="image8.jpeg" alt="">
+      <img src="indah3.jpeg" alt="">
+      <img src="indah5.jpeg" alt="">
+    </div>
+    <div class="slider-overlay"></div>
+  </div>
+</section>
+
+<div class="divider"><span>♡</span></div>
+
+<section class="reveal">
+  <div class="sec-title">
+    <div class="sec-label">Photo Gallery</div>
+    <h2>About you <em>Babee</em></h2>
+    <p>Girl, your amazing just the way you are</p>
+  </div>
+  <div class="masonry">
+    <div class="masonry-item">
+      <img src="image7.jpeg" alt="">
+      <div class="item-label"><h4>wow</h4><p></p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="image6.jpeg" alt="">
+      <div class="item-label"><h4>busett</h4><p>cakeppp bingitt</p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="kecill.jpeg" alt="">
+      <div class="item-label"><h4>mantep nih</h4><p></p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="indah6.jpeg" alt="">
+      <div class="item-label"><h4>gakuatt</h4><p></p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="image15.jpeg" alt="">
+      <div class="item-label"><h4>cakepppp amat </h4><p></p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="indah3.jpeg" alt="">
+      <div class="item-label"><h4>Babee</h4><p></p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="indah1 (2).jpeg" alt="">
+      <div class="item-label"><h4>gacorr</h4><p> </p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="indahcantik.jpeg" alt="">
+      <div class="item-label"><h4>aduhhhh</h4><p> </p></div>
+    </div>
+    <div class="masonry-item">
+      <img src="injell.jpeg" alt="">
+      <div class="item-label"><h4>cantikk banget</h4><p> </p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>✦</span></div>
+
+<section class="reveal">
+  <div class="quote-wrap">
+    <blockquote>
+      "aku emang nggak sempurna,
+      tapi aku selalu usaha buat jadi
+      <em>yang terbaik buat kamu</em>"
+    </blockquote>
+    <p>
+      maaf kalo kesannya alay babe, tapi ini serius dan aku bersyukur banget bisa kenal sama kamu
+    </p>
+  </div>
+</section>
+
+<div class="divider"><span>♡</span></div>
+
+<section class="reveal">
+  <div class="sec-title">
+    <div class="sec-label">Yang Aku Suka</div>
+    <h2>Hal-hal kecil <em>dari Kamu</em></h2>
+  </div>
+  <div class="moments-strip">
+    <div class="moment-card">
+      <img src="image7.jpeg" alt="">
+      <div class="moment-card-body">
+        <span class="moment-num">01</span>
+        <h4>Senyum Kamu</h4>
+        <p> </p>
+      </div>
+    </div>
+    <div class="moment-card">
+      <img src="image6.jpeg" alt="">
+      <div class="moment-card-body">
+        <span class="moment-num">02</span>
+        <h4>Cara kamu ngomong</h4>
+        <p> </p>
+      </div>
+    </div>
+    <div class="moment-card">
+      <img src="image15.jpeg" alt="">
+      <div class="moment-card-body">
+        <span class="moment-num">03</span>
+        <h4>Hal-hal Random dari kamu </h4>
+        <p> </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>✦</span></div>
+
+<section class="reveal">
+  <div class="sec-title">
+    <div class="sec-label"></div>
+    <h2> <em> poets</em></h2>
+  </div>
+  <div class="letter-outer">
+    <div class="letter-wrap">
+      <div class="letter-greeting">Buat Indah pacar aku,</div>
+      <p>jujur, ada hal yang mungkin jarang banget aku bilang sama kamu: <em>aku beneran bersyukur kamu ada di hidup aku.</em></p>
+      <p>kamu bukan cuma orang yang aku sayang  kamu yang bikin aku mau jadi lebih baik dari sebelumnya. hari-hari biasa jadi kerasa beda kalau ada kamu.</p>
+      <p>hari ini, besok, atau nanti  aku mau tetap ada buat kamu.</p>
+      <p><em>selamat ulang tahun, Babee. kamu layak dapet semua yang baik di dunia.</em></p>
+      <div class="letter-sig">
+        <span>aziz ♡</span>
+        <small>with love</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="closing-ring" style="width:260px;height:260px;top:50%;left:50%;"></div>
+  <div class="closing-ring" style="width:460px;height:460px;top:50%;left:50%;animation-delay:-2s;"></div>
+  <div class="closing-ring" style="width:660px;height:660px;top:50%;left:50%;animation-delay:-1s;"></div>
+  <div class="closing-content reveal">
+    <h2>HBD <em>Indah Jelitaaa</em></h2>
+    <p>panjang umur, sehat selalu, semoga semua yang kamu impikan semuanya tercapai, kejar S2 unpad ituuu, im here for you.</p>
+    <div class="closing-sig">aziz with love ♡</div>
+    <div class="closing-badge">14 September · your special day</div>
+  </div>
+</section>
+
+</div>
+
+<!-- THREE.JS via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════
+   THREE.JS 3D BACKGROUND
+   - Floating heart / torus shapes in rose palette
+   - Gentle particle field
+   - Mouse parallax
+   - ✨ NEW: 3D Floating Love Hearts
+   ═══════════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('three-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 18);
+
+  /* ── LIGHTS ── */
+  const ambientLight = new THREE.AmbientLight(0xfde8ef, 0.8);
+  scene.add(ambientLight);
+  const dirLight = new THREE.DirectionalLight(0xe05c7a, 1.2);
+  dirLight.position.set(5, 8, 10);
+  scene.add(dirLight);
+  const pointLight = new THREE.PointLight(0xf5b8c8, 1.5, 60);
+  pointLight.position.set(-8, 4, 6);
+  scene.add(pointLight);
+
+  /* ── PALETTE ── */
+  const rosePalette = [
+    0xe05c7a, 0xe8849a, 0xf5b8c8,
+    0xfde8ef, 0xb8895a, 0xf2a0bc,
+    0xf9d0de, 0xd4537e
+  ];
+
+  /* ═══════════════════════════════════════
+     ✨ NEW: 3D HEART GEOMETRY BUILDER
+     Creates a heart shape using bezier curves
+     extruded into 3D
+  ═══════════════════════════════════════ */
+  function createHeartGeometry(size) {
+    const x = 0, y = 0;
+    const heartShape = new THREE.Shape();
+    heartShape.moveTo(x + 0.5 * size, y + 0.5 * size);
+    heartShape.bezierCurveTo(
+      x + 0.5 * size, y + 0.5 * size,
+      x + 0.4 * size, y + 0.7 * size,
+      x, y + 0.7 * size
+    );
+    heartShape.bezierCurveTo(
+      x - 0.6 * size, y + 0.7 * size,
+      x - 0.6 * size, y + 0.35 * size,
+      x - 0.6 * size, y + 0.35 * size
+    );
+    heartShape.bezierCurveTo(
+      x - 0.6 * size, y + 0.1 * size,
+      x - 0.4 * size, y - 0.1 * size,
+      x + 0.5 * size, y - 0.4 * size
+    );
+    heartShape.bezierCurveTo(
+      x + 1.2 * size, y - 0.1 * size,
+      x + 1.2 * size, y + 0.1 * size,
+      x + 1.2 * size, y + 0.35 * size
+    );
+    heartShape.bezierCurveTo(
+      x + 1.2 * size, y + 0.35 * size,
+      x + 1.2 * size, y + 0.7 * size,
+      x + 0.8 * size, y + 0.7 * size
+    );
+    heartShape.bezierCurveTo(
+      x + 0.6 * size, y + 0.7 * size,
+      x + 0.5 * size, y + 0.5 * size,
+      x + 0.5 * size, y + 0.5 * size
+    );
+
+    const extrudeSettings = {
+      depth: size * 0.3,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 2,
+      bevelSize: size * 0.08,
+      bevelThickness: size * 0.08
+    };
+    const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+    geometry.center();
+    return geometry;
+  }
+
+  /* ── 3D FLOATING HEARTS ── */
+  const hearts3D = [];
+  const heartColors = [
+    0xe05c7a, /* rose */
+    0xd4537e, /* deep rose */
+    0xf2a0bc, /* soft pink */
+    0xe8849a, /* rose mid */
+    0xf5b8c8, /* rose light */
+    0xb8895a, /* gold */
+    0xf9d0de, /* pale pink */
+    0xff8fab, /* hot pink */
+  ];
+
+  for (let i = 0; i < 22; i++) {
+    const size = 0.18 + Math.random() * 0.55;
+    const geo = createHeartGeometry(size);
+    const colorIdx = i % heartColors.length;
+    const opacity = 0.12 + Math.random() * 0.22;
+
+    /* alternate between solid and wireframe for visual variety */
+    const isWire = Math.random() < 0.35;
+    const mat = new THREE.MeshPhongMaterial({
+      color: heartColors[colorIdx],
+      transparent: true,
+      opacity: isWire ? opacity * 0.7 : opacity,
+      shininess: isWire ? 30 : 90,
+      wireframe: isWire,
+      side: THREE.DoubleSide,
+    });
+
+    const mesh = new THREE.Mesh(geo, mat);
+
+    /* spread hearts across the full scene */
+    mesh.position.set(
+      (Math.random() - 0.5) * 46,
+      (Math.random() - 0.5) * 38,
+      (Math.random() - 0.5) * 16 - 3
+    );
+
+    /* random initial rotation */
+    mesh.rotation.x = Math.random() * Math.PI * 2;
+    mesh.rotation.y = Math.random() * Math.PI * 2;
+    mesh.rotation.z = (Math.random() - 0.5) * 0.8;
+
+    mesh.userData = {
+      /* gentle tumble */
+      rotX: (Math.random() - 0.5) * 0.007,
+      rotY: (Math.random() - 0.5) * 0.009,
+      rotZ: (Math.random() - 0.5) * 0.004,
+      /* slow drift upward */
+      driftY: 0.006 + Math.random() * 0.010,
+      /* side-to-side sway */
+      swayAmp: 0.015 + Math.random() * 0.025,
+      swayFreq: 0.3 + Math.random() * 0.5,
+      swayOffset: Math.random() * Math.PI * 2,
+      /* float bob */
+      floatAmp: 0.008 + Math.random() * 0.014,
+      floatFreq: 0.25 + Math.random() * 0.45,
+      floatOffset: Math.random() * Math.PI * 2,
+      /* original Y for boundary check */
+      originY: mesh.position.y,
+      /* depth pulsing */
+      pulseAmp: 0.003 + Math.random() * 0.005,
+      pulseFreq: 0.4 + Math.random() * 0.6,
+      pulseOffset: Math.random() * Math.PI * 2,
+      /* scale pulse for alive feeling */
+      baseScale: 1.0,
+      scaleAmp: 0.04 + Math.random() * 0.06,
+      scaleFreq: 0.5 + Math.random() * 0.8,
+      scaleOffset: Math.random() * Math.PI * 2,
+    };
+
+    scene.add(mesh);
+    hearts3D.push(mesh);
+  }
+
+  /* ── FLOATING TORUS KNOTS (dreamy shapes) ── */
+  const torusKnots = [];
+  const tkGeo = new THREE.TorusKnotGeometry(0.55, 0.18, 80, 16, 2, 3);
+  for (let i = 0; i < 8; i++) {
+    const mat = new THREE.MeshPhongMaterial({
+      color: rosePalette[i % rosePalette.length],
+      transparent: true,
+      opacity: 0.13 + Math.random() * 0.10,
+      shininess: 60,
+      wireframe: false
+    });
+    const mesh = new THREE.Mesh(tkGeo, mat);
+    mesh.position.set(
+      (Math.random() - 0.5) * 34,
+      (Math.random() - 0.5) * 28,
+      (Math.random() - 0.5) * 14 - 4
+    );
+    const s = 0.6 + Math.random() * 1.2;
+    mesh.scale.setScalar(s);
+    mesh.userData = {
+      speedX: (Math.random() - 0.5) * 0.003,
+      speedY: (Math.random() - 0.5) * 0.003,
+      speedZ: (Math.random() - 0.5) * 0.002,
+      floatAmp: 0.3 + Math.random() * 0.5,
+      floatFreq: 0.4 + Math.random() * 0.6,
+      floatOffset: Math.random() * Math.PI * 2
+    };
+    scene.add(mesh);
+    torusKnots.push(mesh);
+  }
+
+  /* ── FLOATING TORUS (rings) ── */
+  const rings = [];
+  const ringGeo = new THREE.TorusGeometry(1, 0.06, 16, 80);
+  for (let i = 0; i < 10; i++) {
+    const mat = new THREE.MeshPhongMaterial({
+      color: rosePalette[i % rosePalette.length],
+      transparent: true,
+      opacity: 0.08 + Math.random() * 0.12,
+      shininess: 80
+    });
+    const mesh = new THREE.Mesh(ringGeo, mat);
+    mesh.position.set(
+      (Math.random() - 0.5) * 40,
+      (Math.random() - 0.5) * 32,
+      (Math.random() - 0.5) * 12 - 6
+    );
+    const s = 1.0 + Math.random() * 2.5;
+    mesh.scale.setScalar(s);
+    mesh.rotation.x = Math.random() * Math.PI;
+    mesh.rotation.y = Math.random() * Math.PI;
+    mesh.userData = {
+      rotX: (Math.random() - 0.5) * 0.004,
+      rotY: (Math.random() - 0.5) * 0.004,
+      floatAmp: 0.2 + Math.random() * 0.4,
+      floatFreq: 0.3 + Math.random() * 0.5,
+      floatOffset: Math.random() * Math.PI * 2
+    };
+    scene.add(mesh);
+    rings.push(mesh);
+  }
+
+  /* ── ICOSAHEDRON GEMS ── */
+  const gems = [];
+  const gemGeo = new THREE.IcosahedronGeometry(0.4, 0);
+  for (let i = 0; i < 14; i++) {
+    const mat = new THREE.MeshPhongMaterial({
+      color: rosePalette[i % rosePalette.length],
+      transparent: true,
+      opacity: 0.10 + Math.random() * 0.14,
+      shininess: 120,
+      flatShading: true
+    });
+    const mesh = new THREE.Mesh(gemGeo, mat);
+    mesh.position.set(
+      (Math.random() - 0.5) * 44,
+      (Math.random() - 0.5) * 36,
+      (Math.random() - 0.5) * 10 - 5
+    );
+    const s = 0.5 + Math.random() * 1.8;
+    mesh.scale.setScalar(s);
+    mesh.userData = {
+      rotX: (Math.random() - 0.5) * 0.006,
+      rotY: (Math.random() - 0.5) * 0.006,
+      floatAmp: 0.15 + Math.random() * 0.35,
+      floatFreq: 0.5 + Math.random() * 0.8,
+      floatOffset: Math.random() * Math.PI * 2
+    };
+    scene.add(mesh);
+    gems.push(mesh);
+  }
+
+  /* ── STAR / PARTICLE FIELD ── */
+  const particleCount = 320;
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 60;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
+  }
+  const particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particleMat = new THREE.PointsMaterial({
+    color: 0xf5b8c8,
+    size: 0.08,
+    transparent: true,
+    opacity: 0.55,
+    sizeAttenuation: true
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
+  /* ── MOUSE PARALLAX ── */
+  let mouseX = 0, mouseY = 0;
+  let targetX = 0, targetY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  /* ── SCROLL-BASED DEPTH ── */
+  let scrollY = 0;
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+  /* ── RESIZE ── */
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
+  /* ── ANIMATION LOOP ── */
+  const clock = new THREE.Clock();
+  const SCENE_HALF_H = 22; /* vertical boundary for heart respawn */
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const elapsed = clock.getElapsedTime();
+
+    /* smooth mouse */
+    targetX += (mouseX - targetX) * 0.03;
+    targetY += (mouseY - targetY) * 0.03;
+
+    /* camera gentle sway */
+    camera.position.x = targetX * 2.0;
+    camera.position.y = -targetY * 1.5 - scrollY * 0.003;
+    camera.lookAt(0, -scrollY * 0.002, 0);
+
+    /* ═══════════════════════════
+       ✨ ANIMATE 3D HEARTS
+    ═══════════════════════════ */
+    hearts3D.forEach(h => {
+      const d = h.userData;
+
+      /* gentle tumble rotation */
+      h.rotation.x += d.rotX;
+      h.rotation.y += d.rotY;
+      h.rotation.z += d.rotZ;
+
+      /* drift upward slowly */
+      h.position.y += d.driftY;
+
+      /* side-to-side sway */
+      h.position.x += Math.sin(elapsed * d.swayFreq + d.swayOffset) * d.swayAmp;
+
+      /* vertical bob */
+      h.position.z += Math.sin(elapsed * d.floatFreq + d.floatOffset) * d.floatAmp;
+
+      /* scale pulse — heart "beats" */
+      const scalePulse = d.baseScale + Math.sin(elapsed * d.scaleFreq + d.scaleOffset) * d.scaleAmp;
+      h.scale.setScalar(scalePulse);
+
+      /* wrap around when drifted too far up */
+      if (h.position.y > SCENE_HALF_H + 4) {
+        h.position.y = -SCENE_HALF_H - 4;
+        /* randomize X on respawn so they don't stack */
+        h.position.x = (Math.random() - 0.5) * 46;
+      }
+    });
+
+    /* torus knots */
+    torusKnots.forEach(m => {
+      m.rotation.x += m.userData.speedX;
+      m.rotation.y += m.userData.speedY;
+      m.rotation.z += m.userData.speedZ;
+      m.position.y += Math.sin(elapsed * m.userData.floatFreq + m.userData.floatOffset) * m.userData.floatAmp * 0.008;
+    });
+
+    /* rings */
+    rings.forEach(m => {
+      m.rotation.x += m.userData.rotX;
+      m.rotation.y += m.userData.rotY;
+      m.position.y += Math.sin(elapsed * m.userData.floatFreq + m.userData.floatOffset) * m.userData.floatAmp * 0.007;
+    });
+
+    /* gems */
+    gems.forEach(m => {
+      m.rotation.x += m.userData.rotX;
+      m.rotation.y += m.userData.rotY;
+      m.position.y += Math.sin(elapsed * m.userData.floatFreq + m.userData.floatOffset) * m.userData.floatAmp * 0.007;
+    });
+
+    /* particles slow drift */
+    particles.rotation.y = elapsed * 0.012;
+    particles.rotation.x = elapsed * 0.006;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+})();
+
+/* ═══════════════════════════════════════════════
+   MOUSE TRAIL EFFECT
+   - Sparkle particles on mouse move
+   - Heart burst on click
+   - Canvas overlay, no DOM spam
+   ═══════════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('trail-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* palette */
+  const colors = [
+    'rgba(224,92,122,',   /* rose */
+    'rgba(232,132,154,',  /* rose-mid */
+    'rgba(245,184,200,',  /* rose-light */
+    'rgba(184,137,90,',   /* gold */
+    'rgba(242,160,188,',  /* pink */
+    'rgba(255,200,220,'   /* pale */
+  ];
+
+  /* ── PARTICLE POOL ── */
+  const particles = [];
+
+  class Particle {
+    constructor(x, y, type) {
+      this.x = x;
+      this.y = y;
+      this.type = type; /* 'spark' | 'heart' | 'star' */
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+
+      if (type === 'heart') {
+        this.size  = 8 + Math.random() * 14;
+        this.vx    = (Math.random() - 0.5) * 4.5;
+        this.vy    = -2.5 - Math.random() * 3.5;
+        this.alpha = 0.9;
+        this.decay = 0.018 + Math.random() * 0.012;
+        this.gravity = 0.08;
+        this.rotation = (Math.random() - 0.5) * 0.3;
+      } else if (type === 'star') {
+        this.size  = 3 + Math.random() * 5;
+        this.vx    = (Math.random() - 0.5) * 3;
+        this.vy    = (Math.random() - 0.5) * 3;
+        this.alpha = 0.85;
+        this.decay = 0.025 + Math.random() * 0.02;
+        this.gravity = 0.04;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.15;
+        this.points = Math.random() < 0.5 ? 4 : 6;
+      } else { /* spark */
+        this.size  = 2 + Math.random() * 4;
+        this.vx    = (Math.random() - 0.5) * 2.5;
+        this.vy    = -0.5 - Math.random() * 2;
+        this.alpha = 0.75;
+        this.decay = 0.030 + Math.random() * 0.025;
+        this.gravity = 0.05;
+      }
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += this.gravity;
+      this.vx *= 0.97;
+      this.alpha -= this.decay;
+      if (this.rotation !== undefined) this.rotation += (this.rotSpeed || 0);
+    }
+
+    draw(ctx) {
+      if (this.alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, this.alpha);
+
+      if (this.type === 'heart') {
+        ctx.translate(this.x, this.y);
+        ctx.scale(this.size / 10, this.size / 10);
+        ctx.fillStyle = this.color + this.alpha.toFixed(2) + ')';
+        ctx.beginPath();
+        ctx.moveTo(0, -3);
+        ctx.bezierCurveTo( 5, -8,  10,  0,  0,  8);
+        ctx.bezierCurveTo(-10,  0, -5, -8,  0, -3);
+        ctx.fill();
+
+      } else if (this.type === 'star') {
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.fillStyle = this.color + this.alpha.toFixed(2) + ')';
+        ctx.beginPath();
+        const n = this.points;
+        const outerR = this.size;
+        const innerR = this.size * 0.42;
+        for (let i = 0; i < n * 2; i++) {
+          const r = i % 2 === 0 ? outerR : innerR;
+          const angle = (i * Math.PI) / n - Math.PI / 2;
+          if (i === 0) ctx.moveTo(Math.cos(angle) * r, Math.sin(angle) * r);
+          else ctx.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+      } else { /* spark — glowing circle */
+        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+        grad.addColorStop(0,   this.color + Math.min(1, this.alpha * 1.4).toFixed(2) + ')');
+        grad.addColorStop(0.5, this.color + this.alpha.toFixed(2) + ')');
+        grad.addColorStop(1,   this.color + '0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    isDead() { return this.alpha <= 0; }
+  }
+
+  /* ── TRAIL HISTORY ── */
+  const trail = [];
+  const TRAIL_MAX = 120;
+
+  /* fade multiplier: 1 = penuh, turun ke 0 saat mouse dilepas */
+  let trailOpacity = 0;
+  let mouseActive  = false;
+  let mouseIdleTimer = null;
+
+  /* warna gradasi ekor */
+  const TRAIL_COLORS = [
+    [249, 208, 222],
+    [245, 184, 200],
+    [232, 132, 154],
+    [224,  92, 122],
+    [212,  83, 126],
+  ];
+
+  function lerpColor(a, b, t) {
+    return [
+      a[0] + (b[0]-a[0]) * t,
+      a[1] + (b[1]-a[1]) * t,
+      a[2] + (b[2]-a[2]) * t,
+    ];
+  }
+
+  function trailColor(prog) {
+    const idx = prog * (TRAIL_COLORS.length - 1);
+    const lo  = Math.floor(idx);
+    const hi  = Math.min(lo + 1, TRAIL_COLORS.length - 1);
+    return lerpColor(TRAIL_COLORS[lo], TRAIL_COLORS[hi], idx - lo);
+  }
+
+  /* helper: draw 2D heart */
+  function drawHeart2D(cx2, x, y, size, alpha, color) {
+    cx2.save();
+    cx2.globalAlpha = Math.max(0, alpha);
+    cx2.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
+    cx2.translate(x, y);
+    cx2.scale(size / 10, size / 10);
+    cx2.beginPath();
+    cx2.moveTo(0, -3);
+    cx2.bezierCurveTo( 5, -8,  10,  0,  0,  8);
+    cx2.bezierCurveTo(-10,  0, -5, -8,  0, -3);
+    cx2.fill();
+    cx2.restore();
+  }
+
+  /* ── MOUSE / TOUCH TRACKING ── */
+  let frameCount = 0;
+  let lastMX = -999, lastMY = -999;
+
+  function setMouseActive() {
+    mouseActive = true;
+    clearTimeout(mouseIdleTimer);
+    /* anggap "dilepas" setelah 80ms tanpa gerakan */
+    mouseIdleTimer = setTimeout(() => { mouseActive = false; }, 80);
+  }
+
+  function handleMove(mx, my) {
+    setMouseActive();
+    trail.push({ x: mx, y: my });
+    if (trail.length > TRAIL_MAX) trail.shift();
+
+    frameCount++;
+    if (frameCount % 2 === 0) particles.push(new Particle(mx, my, 'spark'));
+    if (frameCount % 5 === 0) particles.push(new Particle(mx, my, 'star'));
+
+    const dx = mx - lastMX, dy = my - lastMY;
+    if (Math.sqrt(dx*dx + dy*dy) > 12 && frameCount % 10 === 0) {
+      particles.push(new Particle(mx, my, 'heart'));
+    }
+    lastMX = mx; lastMY = my;
+  }
+
+  document.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+
+  document.addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    handleMove(t.clientX, t.clientY);
+  }, { passive: true });
+
+  document.addEventListener('touchstart', e => {
+    setMouseActive();
+    const t = e.touches[0];
+    for (let i = 0; i < 6; i++) particles.push(new Particle(t.clientX, t.clientY, 'heart'));
+    for (let i = 0; i < 5; i++) particles.push(new Particle(t.clientX, t.clientY, 'star'));
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => { mouseActive = false; }, { passive: true });
+
+  document.addEventListener('click', e => {
+    const cx2 = e.clientX, cy2 = e.clientY;
+    for (let i = 0; i < 14; i++) particles.push(new Particle(cx2, cy2, 'heart'));
+    for (let i = 0; i < 10; i++) particles.push(new Particle(cx2, cy2, 'star'));
+    for (let i = 0; i < 8; i++)  particles.push(new Particle(cx2, cy2, 'spark'));
+  });
+
+  /* ── RENDER LOOP ── */
+  function loop() {
+    requestAnimationFrame(loop);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    /* smooth fade in/out */
+    const targetOpacity = mouseActive ? 1 : 0;
+    trailOpacity += (targetOpacity - trailOpacity) * 0.07;
+
+    /* saat fade-out selesai, bersihkan trail */
+    if (!mouseActive && trailOpacity < 0.01) {
+      trail.length = 0;
+    }
+
+    if (trail.length > 2 && trailOpacity > 0.01) {
+      const n = trail.length;
+      const op = trailOpacity; /* global multiplier */
+
+      /* ── LAYER 1: soft outer glow (tipis) ── */
+      for (let i = 1; i < n; i++) {
+        const prog = i / n;
+        const col  = trailColor(prog);
+        ctx.beginPath();
+        ctx.moveTo(trail[i-1].x, trail[i-1].y);
+        ctx.lineTo(trail[i].x,   trail[i].y);
+        ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${(prog * prog * 0.12 * op).toFixed(3)})`;
+        ctx.lineWidth   = 1 + prog * 10;  /* max 11px — lebih kecil */
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+        ctx.stroke();
+      }
+
+      /* ── LAYER 2: mid glow ── */
+      for (let i = 1; i < n; i++) {
+        const prog = i / n;
+        const col  = trailColor(prog);
+        ctx.beginPath();
+        ctx.moveTo(trail[i-1].x, trail[i-1].y);
+        ctx.lineTo(trail[i].x,   trail[i].y);
+        ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${(prog * prog * 0.25 * op).toFixed(3)})`;
+        ctx.lineWidth   = 0.5 + prog * 4.5; /* max 5px */
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+        ctx.stroke();
+      }
+
+      /* ── LAYER 3: bright core ── */
+      for (let i = 1; i < n; i++) {
+        const prog = i / n;
+        if (prog < 0.15) continue;
+        const col  = trailColor(prog);
+        const a    = (prog - 0.15) / 0.85 * 0.70 * op;
+        ctx.beginPath();
+        ctx.moveTo(trail[i-1].x, trail[i-1].y);
+        ctx.lineTo(trail[i].x,   trail[i].y);
+        ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${a.toFixed(3)})`;
+        ctx.lineWidth   = prog * 2;  /* max 2px — sangat tipis */
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+        ctx.stroke();
+      }
+
+      /* ── LAYER 4: mini hearts di sepanjang ekor ── */
+      const step = Math.max(1, Math.floor(n / 14));
+      for (let i = step; i < n; i += step) {
+        const prog  = i / n;
+        const col   = trailColor(prog);
+        drawHeart2D(ctx, trail[i].x, trail[i].y,
+          1.5 + prog * 3.5,           /* ukuran max ~5 — lebih kecil */
+          prog * prog * 0.50 * op,
+          col);
+      }
+
+      /* ── LAYER 5: orb + hati kecil di ujung kursor ── */
+      const tip = trail[n - 1];
+
+      /* outer halo — radius dikecilkan */
+      const halo = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 14);
+      halo.addColorStop(0,   `rgba(224,92,122,${(0.30 * op).toFixed(2)})`);
+      halo.addColorStop(0.5, `rgba(232,132,154,${(0.12 * op).toFixed(2)})`);
+      halo.addColorStop(1,   'rgba(245,184,200,0)');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* inner core */
+      const core = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 5);
+      core.addColorStop(0,   `rgba(255,200,220,${(0.90 * op).toFixed(2)})`);
+      core.addColorStop(0.5, `rgba(224,92,122,${(0.65 * op).toFixed(2)})`);
+      core.addColorStop(1,   'rgba(224,92,122,0)');
+      ctx.fillStyle = core;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* tiny heart at tip */
+      drawHeart2D(ctx, tip.x, tip.y, 6, 0.85 * op, [224, 92, 122]);
+    }
+
+    /* particles */
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      if (particles[i].isDead()) particles.splice(i, 1);
+    }
+  }
+
+  loop();
+})();
+
+/* ═══════════════════════════════════════════════
+   ORIGINAL SCRIPTS (unchanged)
+   ═══════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1900);
+});
+
+const petalsEl = document.getElementById('petals');
+const pc = ['#f5b8c8','#f2a0bc','#e8849a','#fde8ef','#f9d0de'];
+for (let i = 0; i < 22; i++) {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  const sz = 5 + Math.random() * 7;
+  p.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${pc[Math.floor(Math.random()*pc.length)]};--fd:${(7+Math.random()*9).toFixed(1)}s;--fdelay:${(Math.random()*14).toFixed(1)}s;`;
+  petalsEl.appendChild(p);
+}
+
+const music = document.getElementById('music');
+const btn = document.getElementById('musicBtn');
+let playing = false;
+btn.onclick = () => {
+  if (!playing) { music.play().catch(()=>{}); btn.textContent='❙❙'; playing=true; }
+  else { music.pause(); btn.textContent='♫'; playing=false; }
+};
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} });
+}, {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+<!-- ═══════════════════════════════════════════════
+     ✨ TAMBAHAN: MORE 3D HEARTS — MOUSE REACTIVE
+     Scene terpisah, tidak mengubah kode asli.
+     - 55 hearts ekstra mengambang
+     - Repulsi mouse: hearts menyebar saat kursor mendekat
+     - Atraksi ringan: hearts melayang pelan ke arah kursor
+     - Klik: 8 hearts baru muncul dari posisi kursor
+     - Camera sway mengikuti mouse
+     ═══════════════════════════════════════════════ -->
+<script>
+(function() {
+  const canvas2 = document.createElement('canvas');
+  canvas2.id = 'hearts-canvas';
+  canvas2.style.cssText = 'position:fixed;inset:0;z-index:5;pointer-events:none;';
+  document.body.appendChild(canvas2);
+
+  const renderer2 = new THREE.WebGLRenderer({ canvas: canvas2, alpha: true, antialias: true });
+  renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer2.setSize(window.innerWidth, window.innerHeight);
+  renderer2.setClearColor(0x000000, 0);
+
+  const scene2 = new THREE.Scene();
+  const cam2 = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  cam2.position.set(0, 0, 20);
+
+  scene2.add(new THREE.AmbientLight(0xfde8ef, 1.0));
+  const dl = new THREE.DirectionalLight(0xe05c7a, 1.8);
+  dl.position.set(4, 6, 8);
+  scene2.add(dl);
+  const pl = new THREE.PointLight(0xf9d0de, 2.0, 80);
+  pl.position.set(-6, 3, 10);
+  scene2.add(pl);
+
+  function mkHeart(sz) {
+    const s = new THREE.Shape();
+    s.moveTo(0, sz * 0.25);
+    s.bezierCurveTo( sz*.5,  sz*.8,  sz*1.2,  sz*.3,  sz*.5, -sz*.1);
+    s.bezierCurveTo( sz*.9, -sz*.5,  sz*1.4,  sz*.0,  sz*.9, -sz*.6);
+    s.bezierCurveTo( sz*.6, -sz*1.0,  sz*.0, -sz*.8,   0,   -sz*.4);
+    s.bezierCurveTo(-sz*.0, -sz*.8, -sz*.6, -sz*1.0, -sz*.9, -sz*.6);
+    s.bezierCurveTo(-sz*1.4, sz*.0, -sz*.9, -sz*.5, -sz*.5, -sz*.1);
+    s.bezierCurveTo(-sz*1.2,  sz*.3, -sz*.5,  sz*.8,   0,    sz*.25);
+    const g = new THREE.ExtrudeGeometry(s, {
+      depth: sz * 0.35, bevelEnabled: true,
+      bevelSegments: 3, bevelSize: sz * 0.07, bevelThickness: sz * 0.07
+    });
+    g.center();
+    return g;
+  }
+
+  const palette = [
+    0xe05c7a, 0xd4537e, 0xf2a0bc, 0xe8849a,
+    0xf5b8c8, 0xb8895a, 0xf9d0de, 0xff6b8a,
+    0xff4d7d, 0xffc2d4, 0xffb3c6, 0xe63870
+  ];
+
+  function spawnHeart(x, y, z, sz, wire) {
+    const geo = mkHeart(sz);
+    const col = palette[Math.floor(Math.random() * palette.length)];
+    const op  = wire ? 0.09 + Math.random()*0.15 : 0.18 + Math.random()*0.28;
+    const mat = new THREE.MeshPhongMaterial({
+      color: col, transparent: true, opacity: op,
+      shininess: wire ? 20 : 100, wireframe: wire, side: THREE.DoubleSide
+    });
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    m.rotation.x = Math.random() * Math.PI * 2;
+    m.rotation.y = Math.random() * Math.PI * 2;
+    m.rotation.z = (Math.random() - 0.5) * 1.2;
+    m.userData = {
+      vx: (Math.random() - 0.5) * 0.008,
+      vy: 0.004 + Math.random() * 0.012,
+      rx: (Math.random() - 0.5) * 0.009,
+      ry: (Math.random() - 0.5) * 0.011,
+      rz: (Math.random() - 0.5) * 0.005,
+      bAmp: 0.01 + Math.random() * 0.018,
+      bFreq: 0.3 + Math.random() * 0.6,
+      bOff:  Math.random() * Math.PI * 2,
+      sAmp: 0.05 + Math.random() * 0.08,
+      sFreq: 0.6 + Math.random() * 1.2,
+      sOff:  Math.random() * Math.PI * 2,
+      burst: false
+    };
+    scene2.add(m);
+    return m;
+  }
+
+  const HEARTS = [];
+  for (let i = 0; i < 55; i++) {
+    const sz = 0.12 + Math.random() * 0.60;
+    HEARTS.push(spawnHeart(
+      (Math.random() - 0.5) * 50,
+      (Math.random() - 0.5) * 42,
+      (Math.random() - 0.5) * 18 - 4,
+      sz, Math.random() < 0.30
+    ));
+  }
+
+  let mouseNDC = new THREE.Vector2(0, 0);
+  let mouseWorld = new THREE.Vector3(0, 0, 0);
+  const raycaster2 = new THREE.Raycaster();
+  const plane2 = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+  document.addEventListener('mousemove', e => {
+    mouseNDC.x =  (e.clientX / window.innerWidth)  * 2 - 1;
+    mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    raycaster2.setFromCamera(mouseNDC, cam2);
+    raycaster2.ray.intersectPlane(plane2, mouseWorld);
+  });
+
+  /* touch support — project touch to world coords */
+  document.addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    mouseNDC.x =  (t.clientX / window.innerWidth)  * 2 - 1;
+    mouseNDC.y = -(t.clientY / window.innerHeight) * 2 + 1;
+    raycaster2.setFromCamera(mouseNDC, cam2);
+    raycaster2.ray.intersectPlane(plane2, mouseWorld);
+  }, { passive: true });
+
+  document.addEventListener('click', e => {
+    const cx = mouseWorld.x, cy = mouseWorld.y;
+    for (let i = 0; i < 10; i++) {
+      const sz = 0.10 + Math.random() * 0.40;
+      const h = spawnHeart(cx, cy, (Math.random()-0.5)*4, sz, Math.random() < 0.2);
+      h.userData.vy   = 0.025 + Math.random() * 0.045;
+      h.userData.vx   = (Math.random() - 0.5) * 0.07;
+      h.userData.burst = true;
+      HEARTS.push(h);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    renderer2.setSize(window.innerWidth, window.innerHeight);
+    cam2.aspect = window.innerWidth / window.innerHeight;
+    cam2.updateProjectionMatrix();
+  });
+
+  const clock2 = new THREE.Clock();
+  const REPEL_R   = 5.5;
+  const REPEL_F   = 0.24;
+  const ATTRACT_R = 9.5;
+  const ATTRACT_F = 0.013;
+  const SCENE_H   = 27;
+
+  function tick() {
+    requestAnimationFrame(tick);
+    const t = clock2.getElapsedTime();
+
+    for (let i = HEARTS.length - 1; i >= 0; i--) {
+      const h = HEARTS[i];
+      const d = h.userData;
+
+      h.rotation.x += d.rx;
+      h.rotation.y += d.ry;
+      h.rotation.z += d.rz;
+
+      const sc = 1.0 + Math.sin(t * d.sFreq + d.sOff) * d.sAmp;
+      h.scale.setScalar(sc);
+
+      h.position.z += Math.sin(t * d.bFreq + d.bOff) * d.bAmp;
+      h.position.y += d.vy;
+      h.position.x += d.vx;
+
+      /* ── MOUSE INTERACTION ── */
+      const dx   = h.position.x - mouseWorld.x;
+      const dy   = h.position.y - mouseWorld.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      if (dist < REPEL_R && dist > 0.01) {
+        /* repulsi kuat — hearts kabur */
+        const f = (REPEL_R - dist) / REPEL_R * REPEL_F;
+        h.position.x += (dx / dist) * f;
+        h.position.y += (dy / dist) * f;
+        h.rotation.z += f * 0.6;   /* spin saat didorong */
+        h.rotation.y += f * 0.4;
+      } else if (dist < ATTRACT_R && dist > REPEL_R) {
+        /* atraksi lembut — drift mendekat */
+        const f = (ATTRACT_R - dist) / ATTRACT_R * ATTRACT_F;
+        h.position.x -= (dx / dist) * f;
+        h.position.y -= (dy / dist) * f;
+      }
+
+      /* batas & respawn */
+      if (h.position.y > SCENE_H + 5) {
+        if (d.burst) {
+          scene2.remove(h);
+          HEARTS.splice(i, 1);
+        } else {
+          h.position.y = -SCENE_H - 5;
+          h.position.x = (Math.random() - 0.5) * 50;
+        }
+      }
+    }
+
+    /* camera follow mouse */
+    cam2.position.x += (mouseNDC.x * 2.2 - cam2.position.x) * 0.04;
+    cam2.position.y += (-mouseNDC.y * 1.6 - cam2.position.y) * 0.04;
+    cam2.lookAt(0, 0, 0);
+
+    renderer2.render(scene2, cam2);
+  }
+
+  tick();
+})();
+</script>
+
+</body>
+</html>
